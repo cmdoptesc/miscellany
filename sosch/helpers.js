@@ -44,53 +44,29 @@ var helpers = {
     return hours;
   },
 
-    // takes the raw times portion of the CSV and parses it to a object
-    // in the format of:
-    /*    days = {
-            Mon: {
-              open: 11,
-              close: 23
-            },
-            Tue: {
-              open: 11,
-              close: 23
-            }
-          }
-    */
-    // times are stored in 24 format
-  parseRawHours: function(rawHours) {
-    var days = {};
+  to12Hr: function(twentyfour) {
+    twentyfour = parseFloat(twentyfour);
 
-    var schedules = rawHours.split('/');
-    _.each(schedules, function(schedule) {
-      schedule = schedule.trim();
+    var min = Math.floor((twentyfour % 1) * 60);
+    if(min === 0) {
+      min = '';
+    } else {
+      min = min + '';
+      min = (min.length<2) ? ':0'+ min : ':'+ min;
+    }
 
-      var openDays = [];     // array of days sharing the same schedule
+    var hr = Math.floor(twentyfour);
+    if(hr === 0 || hr === 24) {
+      hr = '12'+ min +' am';
+    } else if(hr === 12) {
+      hr = '12'+ min +' pm';
+    } else if(hr > 12) {
+        hr = hr%12 + min +' pm';
+    } else {
+      hr = hr + min +' am';
+    }
 
-      var dayRangeRegex = /[a-z]{3}-[a-z]{3}/i;
-      if(schedule.match(dayRangeRegex) && schedule.match(dayRangeRegex).length > 0) {
-        var dayRange = schedule.match(dayRangeRegex)[0].split('-');
-        openDays = helpers.rangeToDays(dayRange[0], dayRange[1]);
-      }
-
-      var singleDaysRegex = /([a-zA-Z]{3})/g;
-      var singleDays = schedule.match(singleDaysRegex);
-
-      _.each(singleDays, function(day) {
-        openDays.push(day);
-      });
-
-      var hoursRegex = /\d*:*\d+ [ap]m - \d*:*\d+ [ap]m/;
-      var openclose = schedule.match(hoursRegex)[0].split(' - ');
-
-      _.each(openDays, function(day){
-        days[day] = {};
-        days[day].open = helpers.to24Hr(openclose[0]);
-        days[day].close = helpers.to24Hr(openclose[1]);
-      });
-    });
-
-    return days;
+    return hr;
   },
 
     // since the schedule considers early morning hours as the previous

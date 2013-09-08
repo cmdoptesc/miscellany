@@ -1,10 +1,11 @@
 var helpers = require('./helpers.js');
+var schedule = require('./schedule.js');
 
   // wrote in pseudo-classical style since I didn't want all instances
   // of Restaurant to have their own instance of isOpen
 var Restaurant = function(name, rawHours) {
   this.name = JSON.parse(name);
-  this.schedule = helpers.parseRawHours(rawHours);
+  this.schedule = schedule(rawHours);
 };
 
   // returns true if it's open for the time, false if not

@@ -11,7 +11,7 @@ var showOpenSpots = function(restaurants, dateObj, printSpots) {
   _.each(restaurants, function(rest) {
     if(rest.isOpen(dateObj)) {
       if(printSpots) {
-        console.log(rest.name +' (closes at '+ rest.schedule[day].close +')');
+        console.log(rest.name +' (closes at '+ helpers.to12Hr(rest.schedule[day].close) +')');
       }
       openSpots.push(rest);
     }

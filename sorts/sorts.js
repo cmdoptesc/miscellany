@@ -1,9 +1,12 @@
-var unsorted = [];
-var quant = 20;
 
-for(var i=0; i<quant; i++) {
-  unsorted.push(Math.floor(Math.random()*100));
-}
+var makeUnsorted = function(quantity, max) {
+  max = max || 100;
+  var unsorted = [];
+  for(var i=0; i<quantity; i++) {
+    unsorted.push(Math.floor(Math.random()*max));
+  }
+  return unsorted;
+};
 
 function mergeSort(unsorted) {
   if(unsorted.length > 1) {
@@ -28,37 +31,64 @@ function mergeSort(unsorted) {
   }
 }
 
-function quickSort(unsortedArray) {
-  if(unsortedArray.length > 1) {
-    var unsorted = unsortedArray.slice();     // copy the original array
+function quickSort(unsorted) {
+  if(unsorted.length > 1) {
+    var sorted = unsorted.slice();     // copy the original array
 
       // finds the pivot using the median of the first, middle, and last elements
-    var lt = unsorted[0];
-    var mid = unsorted[Math.floor(unsorted.length/2)]
-    var rt = unsorted[unsorted.length-1];
+    var lt = sorted[0];
+    var mid = sorted[Math.floor(sorted.length/2)];
+    var rt = sorted[sorted.length-1];
 
     var pivot;
     if(lt <= mid && mid <= rt) {
-      pivot = unsorted.splice(Math.floor(unsorted.length/2), 1);
+      pivot = sorted.splice(Math.floor(sorted.length/2), 1);
     } else if(mid <= lt && lt <= rt) {
-      pivot = unsorted.splice(0, 1);
+      pivot = sorted.splice(0, 1);
     } else {
-      pivot = unsorted.splice(unsorted.length-1, 1);
+      pivot = sorted.splice(sorted.length-1, 1);
     }
 
     var left = [];
     var right = [];
 
-    for(var i=0; i<unsorted.length; i++) {
-      if(unsorted[i] < pivot[0]) {
-        left.push(unsorted[i]);
+    for(var i=0; i<sorted.length; i++) {
+      if(sorted[i] < pivot[0]) {
+        left.push(sorted[i]);
       } else {
-        right.push(unsorted[i]);
+        right.push(sorted[i]);
       }
     }
 
     return quickSort(left).concat(pivot, quickSort(right));
   } else {
-    return unsortedArray;
+    return unsorted;
   }
 }
+
+function quickSortInPlace(unsorted, lb, rb) {
+  if(typeof lb === 'undefined') { lb = 0; }
+  if(typeof rb === 'undefined') { rb = unsorted.length-1; }
+
+  if(lb < rb) {
+    var pivot = unsorted[Math.floor((lb+rb)/2)];
+    var l = lb, r = rb;
+    var tmpSwap;
+
+    while(l < r) {
+      while(unsorted[l] < pivot) { l++; }
+      while(pivot < unsorted[r]) { r--; }
+      if(l <= r) {
+        tmpSwap = unsorted[l];
+        unsorted[l] = unsorted[r];
+        unsorted[r] = tmpSwap;
+        l++;
+        r--;
+      }
+    }
+    quickSortInPlace(unsorted, lb, r);
+    quickSortInPlace(unsorted, l, rb);
+    return unsorted;
+  }
+}
+

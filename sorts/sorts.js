@@ -92,3 +92,55 @@ function quickSortInPlace(unsorted, lb, rb) {
   }
 }
 
+var insertionSort = function(array) {
+
+    // function returns the position array[index] belongs to
+  function insertBefore(array, index) {
+    for(var i=0; i<index; i++) {
+      if(array[index] < array[i]) { break; }
+    }
+    return i;
+  }
+
+    // similar idea as above, but uses binary search to find the index
+    // also, there are elements equal to array[index], this will generally
+    // put return an index before them, whereas the above returns one after
+    /*
+
+        linearSearch([1,2,3,4,4,5,6,4], 7);
+          returns 5
+        binarySearch()
+          returns 3
+    */
+
+  function binarySearch(array, index) {
+    var m, l = 0, r = index;
+    m = Math.floor(r/2);
+
+    while(l < r) {
+      if(array[m] < array[index]) { l = m + 1; }
+      else if(array[index] < array[m]) { r = m; }
+      else { break; }
+      m = l + Math.floor((r-l)/2);
+    }
+    return m;
+  }
+
+  function shiftRight(array, start, end) {
+    if(end <= start || array.length <= end) { return; }
+    var tmp = array[end];
+    for(var i=end; i>start; i--) {
+      array[i] = array[i-1];
+    }
+    return tmp;
+  }
+
+  for(var i=1; i<array.length; i++) {
+    var index = binarySearch(array, i);
+    var tmp = array[i];
+    shiftRight(array, index, i);
+    array[index] = tmp;
+  }
+
+  return array;
+};

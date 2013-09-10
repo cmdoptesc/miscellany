@@ -92,7 +92,7 @@ function quickSortInPlace(unsorted, lb, rb) {
   }
 }
 
-var insertionSort = function(array) {
+var insertionSortVerbose = function(array) {
 
     // function returns the position array[index] belongs to
   function insertBefore(array, index) {
@@ -143,4 +143,32 @@ var insertionSort = function(array) {
   }
 
   return array;
+};
+
+  // optimised version of above
+var insertionSort = function(unsorted) {
+  if(unsorted.length>1) {
+    var i, j;
+    var m, l, r;
+
+    for(i=1; i<unsorted.length; i++) {
+        // binary search for where unsorted[i] should go
+      l = 0;
+      r = i;
+      m = Math.floor(r/2);
+      while(l < r) {
+        if(unsorted[m] < unsorted[i]) { l = m+1; }
+        else if(unsorted[i] < unsorted[m]) { r = m; }
+        else { break; }
+        m = l + Math.floor((r-l)/2);
+      }
+        // shift and insert
+      var tmpSwap = unsorted[i];
+      for(j=i; j>m; j--) {
+        unsorted[j] = unsorted[j-1];
+      }
+      unsorted[m] = tmpSwap;
+    }
+  }
+  return unsorted;
 };

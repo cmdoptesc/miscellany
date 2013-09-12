@@ -92,64 +92,38 @@ function quickSortInPlace(unsorted, lb, rb) {
   }
 }
 
-var insertionSortVerbose = function(array) {
+function binarySearch(array, index) {
+  var m, l = 0, r = index;
+  m = Math.floor(r/2);
 
-    // function returns the position array[index] belongs to
-  function insertBefore(array, index) {
-    for(var i=0; i<index; i++) {
-      if(array[index] < array[i]) { break; }
+  while(l < r) {
+    if(array[m] < array[index]) { l = m + 1; }
+    else if(array[index] < array[m]) { r = m; }
+    else { break; }
+    m = l + Math.floor((r-l)/2);
+  }
+  return m;
+}
+
+
+var insertionSortLinear = function(unsorted) {
+  var tmpSwap, i, j;      // j is the insertion point
+  for(i=1; i<unsorted.length; i++) {
+    tmpSwap = unsorted[i];
+    for(j=i; j > 0 && tmpSwap < unsorted[j-1]; j--) {
+      unsorted[j] = unsorted[j-1];
     }
-    return i;
+    unsorted[j] = tmpSwap;
   }
-
-    // similar idea as above, but uses binary search to find the index
-    // also, there are elements equal to array[index], this will generally
-    // put return an index before them, whereas the above returns one after
-    /*
-
-        linearSearch([1,2,3,4,4,5,6,4], 7);
-          returns 5
-        binarySearch()
-          returns 3
-    */
-
-  function binarySearch(array, index) {
-    var m, l = 0, r = index;
-    m = Math.floor(r/2);
-
-    while(l < r) {
-      if(array[m] < array[index]) { l = m + 1; }
-      else if(array[index] < array[m]) { r = m; }
-      else { break; }
-      m = l + Math.floor((r-l)/2);
-    }
-    return m;
-  }
-
-  function shiftRight(array, start, end) {
-    if(end <= start || array.length <= end) { return; }
-    var tmp = array[end];
-    for(var i=end; i>start; i--) {
-      array[i] = array[i-1];
-    }
-    return tmp;
-  }
-
-  for(var i=1; i<array.length; i++) {
-    var index = binarySearch(array, i);
-    var tmp = array[i];
-    shiftRight(array, index, i);
-    array[index] = tmp;
-  }
-
-  return array;
+  return unsorted;
 };
 
-  // optimised version of above
+  // insertion sort using a binary search to find the insertion point
 var insertionSort = function(unsorted) {
   if(unsorted.length>1) {
     var i, j;
     var m, l, r;
+    var tmpSwap;
 
     for(i=1; i<unsorted.length; i++) {
         // binary search for where unsorted[i] should go
@@ -163,7 +137,7 @@ var insertionSort = function(unsorted) {
         m = l + Math.floor((r-l)/2);
       }
         // shift and insert
-      var tmpSwap = unsorted[i];
+      tmpSwap = unsorted[i];
       for(j=i; j>m; j--) {
         unsorted[j] = unsorted[j-1];
       }
